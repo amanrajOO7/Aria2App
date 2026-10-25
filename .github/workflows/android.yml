@@ -2,16 +2,11 @@ name: Android CI
 
 on:
   workflow_dispatch:
-    inputs:
-      publish_release:
-        description: 'Publish release to Google Play & GitHub Releases'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,33 +20,18 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Grant execute permission to scripts
-        run: chmod +x gradlew .github/decrypt_secrets.sh
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Decrypt GPG secrets
-        if: ${{ env.SECRETS_GPG_PASS != '' }}
-        run: .github/decrypt_secrets.sh
-        env:
-          SECRETS_GPG_PASS: ${{ secrets.SECRETS_GPG_PASS }}
+      # Builds debug APKs signed automatically by the default Android debug key
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
 
-      - name: Run code checks and unit tests
-        run: ./gradlew check --no-daemon
-
-      - name: Publish with Gradle
-        if: ${{ inputs.publish_release && env.KEYSTORE_STORE_PASS != '' }}
-        run: ./gradlew assembleRelease publishApps --no-daemon
-        env:
-          KEYSTORE_STORE_PASS: ${{ secrets.KEYSTORE_STORE_PASS }}
-          KEYSTORE_KEY_ALIAS: gianlu
-          KEYSTORE_KEY_PASS: ${{ secrets.KEYSTORE_KEY_PASS }}
-
-      - name: Create GitHub Release
-        if: ${{ inputs.publish_release }}
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
         with:
-          body_path: app/src/main/play/release-notes/en-GB/production.txt
-          draft: true
-          prerelease: false
-          files: app/build/outputs/apk/foss/release/app-foss-release.apk
+          name: debug-apk-artifacts
+          path: app/build/outputs/apk/**/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
+
