@@ -161,11 +161,11 @@ fun ExpressiveFabMenu(
         AnimatedVisibility(
             visible = isExpanded,
             enter = fadeIn(ExpressiveMotion.SnappySpring) + slideInVertically(
-                animationSpec = ExpressiveMotion.BouncySpring,
+                animationSpec = ExpressiveMotion.bouncySpring(),
                 initialOffsetY = { it / 2 }
             ),
             exit = fadeOut(ExpressiveMotion.SnappySpring) + slideOutVertically(
-                animationSpec = ExpressiveMotion.SnappySpring,
+                animationSpec = ExpressiveMotion.snappySpring(),
                 targetOffsetY = { it / 2 }
             )
         ) {
