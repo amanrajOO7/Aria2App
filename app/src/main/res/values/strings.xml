@@ -127,6 +127,7 @@
     <string name="stopService">Stop service</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
     <string name="notificationService">Notification service</string>
+    <string name="notificationPreference_summary">Notifications let you know about finished and failed downloads. Allow notifications so Aria2App can show them.</string>
     <string name="writeExternalStorageRequest_title">Write permission required</string>
     <string name="writeExternalStorageRequest_message">In order to save files to your devices, Aria2App needs to write to your external storage.</string>
     <string name="readExternalStorageRequest_title">Read permission required</string>
