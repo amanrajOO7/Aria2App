@@ -14,12 +14,13 @@ import androidx.annotation.Nullable;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
-
-import org.apmem.tools.layouts.FlowLayout;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.Collection;
 
-public class CustomDownloadInfo extends FlowLayout {
+public class CustomDownloadInfo extends FlexboxLayout {
     private final int dp16;
     private Info[] info = new Info[0];
 
@@ -34,7 +35,8 @@ public class CustomDownloadInfo extends FlowLayout {
     public CustomDownloadInfo(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        setOrientation(HORIZONTAL);
+        setFlexDirection(FlexDirection.ROW);
+        setFlexWrap(FlexWrap.WRAP);
 
         dp16 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources().getDisplayMetrics());
     }

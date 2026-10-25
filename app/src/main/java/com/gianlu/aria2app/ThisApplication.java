@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.gianlu.aria2app.api.ConnectivityChangedReceiver;
 import com.gianlu.aria2app.api.ErrorHandler;
@@ -97,7 +98,8 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(toggleNotificationServiceListener);
 
         connectivityChangedReceiver = new ConnectivityChangedReceiver(this);
-        getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        ContextCompat.registerReceiver(getApplicationContext(), connectivityChangedReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION), ContextCompat.RECEIVER_NOT_EXPORTED);
 
         // Aria2Android integration
         Aria2Ui.provider(Aria2ConfigProvider.class);

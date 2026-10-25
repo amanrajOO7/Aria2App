@@ -23,8 +23,9 @@ import com.gianlu.aria2app.api.geolocalization.IPDetails;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
-
-import org.apmem.tools.layouts.FlowLayout;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public final class TopCountriesView extends FlowLayout {
+public final class TopCountriesView extends FlexboxLayout {
     private final static int DISPLAYED_COUNTRIES = 3;
     private final GeoIP freeGeoIp = GeoIP.get();
     private final Map<String, Integer> topCountries;
@@ -49,7 +50,8 @@ public final class TopCountriesView extends FlowLayout {
 
     public TopCountriesView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setOrientation(HORIZONTAL);
+        setFlexDirection(FlexDirection.ROW);
+        setFlexWrap(FlexWrap.WRAP);
         topCountries = new HashMap<>();
         inflater = LayoutInflater.from(context);
     }

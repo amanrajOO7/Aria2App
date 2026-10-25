@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class SftpHelper extends AbsStreamDownloadHelper {
     private static final String TAG = SftpHelper.class.getSimpleName();
-    private static final String[] sftpNames = {"ssh-dss", "ssh-rsa", "ecdsa-sha2-nistp256", "ecdsa-sha2-nistp384", "ecdsa-sha2-nistp521"};
+    private static final String[] sftpNames = {"ssh-dss", "ssh-rsa", "ecdsa-sha2-nistp256", "ecdsa-sha2-nistp384", "ecdsa-sha2-nistp521", "ssh-ed25519", "rsa-sha2-256", "rsa-sha2-512"};
     private final MultiProfile.DirectDownload.Sftp dd;
     private final JSch jSch;
 

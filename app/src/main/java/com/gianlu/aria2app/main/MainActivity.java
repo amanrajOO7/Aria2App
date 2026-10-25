@@ -24,12 +24,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.compose.ui.platform.ComposeView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.gianlu.aria2app.ui.components.ExpressiveFabController;
+import com.gianlu.aria2app.ui.components.ExpressiveFabMenuHelper;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.PreferenceActivity;
@@ -110,12 +112,12 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, Aria2Ui.Listener, DirectDownloadHelper.UpdateDownloadCountListener {
+public class MainActivity extends UpdaterActivity implements TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, Aria2Ui.Listener, DirectDownloadHelper.UpdateDownloadCountListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private static final String TAG = MainActivity.class.getSimpleName();
     private DrawerManager<MultiProfile, DrawerItem> drawerManager;
-    private FloatingActionsMenu fabMenu;
+    private ExpressiveFabController fabController;
     private DownloadCardsAdapter adapter;
     private SearchView searchView;
     private Uri _sharedUri;
@@ -241,8 +243,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     adapter.itemsChanged(payload.downloads);
                     recyclerViewLayout.stopLoading();
 
-                    if (adapter.getItemCount() == 0)
-                        FloatingActionsMenuBehavior.scaleTo(fabMenu, true);
+                    if (adapter.getItemCount() == 0 && fabController != null)
+                        fabController.collapse();
                 }
 
                 String gid = getIntent().getStringExtra("gid");
@@ -367,22 +369,53 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         recyclerViewLayout.enableSwipeRefresh(() -> refresh(MAIN_WANTS, MainActivity.this), R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
-        fabMenu = findViewById(R.id.main_fab);
-        fabMenu.setOnFloatingActionsMenuUpdateListener(this);
+        ComposeView composeFab = findViewById(R.id.main_compose_fab);
+        if (composeFab != null) {
+            fabController = ExpressiveFabMenuHelper.setupExpressiveFab(
+                    composeFab,
+                    this,
+                    () -> startActivity(new Intent(this, SearchActivity.class)),
+                    () -> startActivity(new Intent(this, AddUriActivity.class)),
+                    () -> startActivity(new Intent(this, AddTorrentActivity.class)),
+                    () -> startActivity(new Intent(this, AddMetalinkActivity.class)),
+                    () -> startActivity(new Intent(this, BatchAddActivity.class)),
+                    () -> startActivity(new Intent(this, WebViewActivity.class)),
+                    Utils.hasWebView(this)
+            );
 
-        FloatingActionButton fabSearch = findViewById(R.id.mainFab_search);
-        fabSearch.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
-        FloatingActionButton fabAddURI = findViewById(R.id.mainFab_addURI);
-        fabAddURI.setOnClickListener(view -> startActivity(new Intent(this, AddUriActivity.class)));
-        FloatingActionButton fabAddTorrent = findViewById(R.id.mainFab_addTorrent);
-        fabAddTorrent.setOnClickListener(view -> startActivity(new Intent(this, AddTorrentActivity.class)));
-        FloatingActionButton fabAddMetalink = findViewById(R.id.mainFab_addMetalink);
-        fabAddMetalink.setOnClickListener(view -> startActivity(new Intent(this, AddMetalinkActivity.class)));
-        FloatingActionButton fabBatchAdd = findViewById(R.id.mainFab_batchAdd);
-        fabBatchAdd.setOnClickListener(v -> startActivity(new Intent(this, BatchAddActivity.class)));
-        FloatingActionButton fabWebView = findViewById(R.id.mainFab_webView);
-        fabWebView.setOnClickListener(v -> startActivity(new Intent(this, WebViewActivity.class)));
-        if (!Utils.hasWebView(this)) fabWebView.setVisibility(View.GONE);
+            final View mask = findViewById(R.id.main_mask);
+            fabController.setOnStateChangeListener(expanded -> {
+                if (mask != null) {
+                    mask.setVisibility(expanded ? View.VISIBLE : View.GONE);
+                    mask.setClickable(expanded);
+                    if (expanded) {
+                        mask.setOnClickListener(v -> {
+                            if (fabController != null) fabController.collapse();
+                        });
+                    }
+                }
+            });
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true)) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                AskPermission.ask(this, Manifest.permission.POST_NOTIFICATIONS, new AskPermission.Listener() {
+                    @Override
+                    public void permissionGranted(@NonNull String permission) {
+                    }
+
+                    @Override
+                    public void permissionDenied(@NonNull String permission) {
+                    }
+
+                    @Override
+                    public void askRationale(@NonNull AlertDialog.Builder builder) {
+                        builder.setTitle(R.string.notificationService)
+                                .setMessage(R.string.notificationPreference_summary);
+                    }
+                });
+            }
+        }
 
         recyclerViewLayout.startLoading();
 
@@ -571,7 +604,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 drawerManager.refreshProfiles(profilesManager.getProfiles());
         }
 
-        if (fabMenu != null) fabMenu.collapseImmediately();
+        if (fabController != null) fabController.collapse();
 
         try {
             if (profilesManager != null) profilesManager.reloadCurrentProfile();
@@ -647,8 +680,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onBackPressed() {
-        if (fabMenu != null && fabMenu.isExpanded()) {
-            fabMenu.collapse();
+        if (fabController != null && fabController.isExpanded()) {
+            fabController.collapse();
             return;
         } else if (secondSpace != null && secondSpaceAdapter != null) {
             OnBackPressed visible = secondSpaceAdapter.getFragments().get(secondSpacePager.getCurrentItem());
@@ -811,20 +844,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         Prefs.putString(PK.A2_MAIN_SORTING, sorting.name());
     }
 
-    @Override
-    public void onMenuExpanded() {
-        final View mask = findViewById(R.id.main_mask);
-        mask.setVisibility(View.VISIBLE);
-        mask.setClickable(true);
-        mask.setOnClickListener(view -> fabMenu.collapse());
-    }
 
-    @Override
-    public void onMenuCollapsed() {
-        final View mask = findViewById(R.id.main_mask);
-        mask.setVisibility(View.GONE);
-        mask.setClickable(false);
-    }
 
     private void showSecondSpace(@NonNull DownloadWithUpdate download) {
         secondSpaceAdapter = new PagerAdapter<>(getSupportFragmentManager(),

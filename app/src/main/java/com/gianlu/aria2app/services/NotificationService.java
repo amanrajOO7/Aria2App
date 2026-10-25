@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.ServiceInfo;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
@@ -30,6 +31,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.collection.ArraySet;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -172,7 +174,11 @@ public class NotificationService extends Service {
                     }
 
                     AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime", System.currentTimeMillis());
-                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        ServiceCompat.startForeground(this, FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+                    } else {
+                        startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                    }
 
                     try {
                         createMessengerIfNeeded();
@@ -183,7 +189,8 @@ public class NotificationService extends Service {
                     }
 
                     connectivityChangedReceiver = new ConnectivityChangedReceiver();
-                    registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                    ContextCompat.registerReceiver(this, connectivityChangedReceiver,
+                            new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION), ContextCompat.RECEIVER_NOT_EXPORTED);
 
                     AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime_return", System.currentTimeMillis());
                 } else {
