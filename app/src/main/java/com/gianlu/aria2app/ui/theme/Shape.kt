@@ -17,4 +17,3 @@ val ExpressiveShapes = Shapes(
 // Custom Expressive tokens for morphing FAB & Action Pills
 val ExpressivePillShape: CornerBasedShape = RoundedCornerShape(50)
 val ExpressiveSquircleShape: CornerBasedShape = RoundedCornerShape(20.dp)
-val ExpressiveCardShape: CornerBasedShape = RoundedCornerShape(22.dp)

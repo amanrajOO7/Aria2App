@@ -6,13 +6,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -76,9 +75,14 @@ private data class FabActionItem(
     val title: String,
     val icon: ImageVector,
     val containerColor: Color,
-    val contentColor: Color = Color.White,
+    val contentColor: Color = contentColorFor(containerColor),
     val onClick: () -> Unit
 )
+
+// Picks black or white, whichever has the higher contrast against the container,
+// so the chip labels stay readable on light colours such as amber.
+private fun contentColorFor(container: Color): Color =
+    if (container.luminance() > 0.179f) Color.Black else Color.White
 
 @Composable
 fun ExpressiveFabMenu(
@@ -196,7 +200,7 @@ fun ExpressiveFabMenu(
         ) {
             Icon(
                 imageVector = Icons.Rounded.Add,
-                contentDescription = if (isExpanded) stringResource(R.string.stopService) else stringResource(R.string.add),
+                contentDescription = if (isExpanded) stringResource(R.string.closeMenu) else stringResource(R.string.add),
                 modifier = Modifier
                     .size(28.dp)
                     .rotate(rotation)

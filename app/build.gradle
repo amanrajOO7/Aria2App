@@ -97,6 +97,7 @@ android {
 
     packaging {
         resources.pickFirsts.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+        resources.excludes.add("META-INF/versions/**/OSGI-INF/MANIFEST.MF")
     }
 
     buildFeatures {

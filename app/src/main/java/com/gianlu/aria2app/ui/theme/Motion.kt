@@ -5,12 +5,6 @@ import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.spring
 
 object ExpressiveMotion {
-    // Spatial spring: Used for positional and shape translation
-    fun <T> spatialSpring(): SpringSpec<T> = spring(
-        dampingRatio = Spring.DampingRatioMediumBouncy,
-        stiffness = Spring.StiffnessLow
-    )
-
     // Snappy spring: Used for icon transitions and quick state switches
     fun <T> snappySpring(): SpringSpec<T> = spring(
         dampingRatio = Spring.DampingRatioNoBouncy,
@@ -23,7 +17,6 @@ object ExpressiveMotion {
         stiffness = 300f
     )
 
-    val SpatialSpring: SpringSpec<Float> = spatialSpring()
     val SnappySpring: SpringSpec<Float> = snappySpring()
     val BouncySpring: SpringSpec<Float> = bouncySpring()
 }

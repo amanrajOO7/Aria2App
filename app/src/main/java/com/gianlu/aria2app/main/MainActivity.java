@@ -384,15 +384,15 @@ public class MainActivity extends UpdaterActivity implements TutorialManager.Lis
             );
 
             final View mask = findViewById(R.id.main_mask);
+            if (mask != null)
+                mask.setOnClickListener(v -> {
+                    if (fabController != null) fabController.collapse();
+                });
+
             fabController.setOnStateChangeListener(expanded -> {
                 if (mask != null) {
                     mask.setVisibility(expanded ? View.VISIBLE : View.GONE);
                     mask.setClickable(expanded);
-                    if (expanded) {
-                        mask.setOnClickListener(v -> {
-                            if (fabController != null) fabController.collapse();
-                        });
-                    }
                 }
             });
         }

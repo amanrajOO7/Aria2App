@@ -107,6 +107,7 @@
     <string name="save">Save</string>
     <string name="support">Support</string>
     <string name="add">Add</string>
+    <string name="closeMenu">Close menu</string>
     <string name="options">Options</string>
     <string name="position">Queue position:</string>
     <string name="downloadSpeed">Download speed</string>
