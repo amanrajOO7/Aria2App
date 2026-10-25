@@ -263,7 +263,7 @@ public class MainActivity extends UpdaterActivity implements TutorialManager.Lis
 
                 LineData data = overallChart.getData();
                 if (data == null) {
-                    Utils.setupChart(overallChart, true, R.color.white);
+                    Utils.setupChart(overallChart, true);
                     data = overallChart.getData();
                 }
 
