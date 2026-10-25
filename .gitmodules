@@ -1,6 +1,6 @@
 [submodule "CommonUtils"]
 	path = CommonUtils
-	url = https://github.com/devgianlu/CommonUtils
+	url = https://github.com/amanrajOO7/CommonUtils
 	branch = master
 [submodule "aria2lib"]
 	path = aria2lib
