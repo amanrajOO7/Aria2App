@@ -21,6 +21,7 @@ import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
+import com.google.android.material.color.DynamicColors;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.preferences.CommonPK;
 import com.gianlu.commonutils.preferences.Prefs;
@@ -80,6 +81,8 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     @Override
     public void onCreate() {
         super.onCreate();
+        // Wallpaper-derived colours on Android 12+; no-op below API 31
+        DynamicColors.applyToActivitiesIfAvailable(this);
         SearchApi.get().cacheSearchEngines();
         MaterialPreferences.setStorageModule(new PrefsStorageModule.Factory());
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from ui/theme/Color.kt; keep in sync with the Compose palette. -->
+<resources>
+    <color name="m3_primary">#BF360C</color>
+    <color name="m3_on_primary">#FFFFFF</color>
+    <color name="m3_primary_container">#FFDBCF</color>
+    <color name="m3_on_primary_container">#3B0900</color>
+    <color name="m3_secondary">#77574E</color>
+    <color name="m3_on_secondary">#FFFFFF</color>
+    <color name="m3_secondary_container">#FFDBCF</color>
+    <color name="m3_on_secondary_container">#2C160F</color>
+    <color name="m3_tertiary">#6C5D2F</color>
+    <color name="m3_on_tertiary">#FFFFFF</color>
+    <color name="m3_tertiary_container">#F6E1A7</color>
+    <color name="m3_on_tertiary_container">#231B00</color>
+    <color name="m3_background">#FCFCFF</color>
+    <color name="m3_on_background">#1A1C1E</color>
+    <color name="m3_surface">#FCFCFF</color>
+    <color name="m3_on_surface">#1A1C1E</color>
+    <color name="m3_surface_variant">#EDE0DC</color>
+    <color name="m3_on_surface_variant">#53433F</color>
+</resources>
